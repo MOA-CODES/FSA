@@ -9,6 +9,7 @@ if(!code){
 }else{
     const accessToken = await getAccessToken(clientId, code)
     const profile = await getProfile(accessToken)
+    console.log(profile)
     populateUI(profile)
 }
 
@@ -74,7 +75,6 @@ async function getProfile(token) {
         method: "GET", headers: { Authorization: `Bearer ${token}`}
     });
 
-    console.log(await result.json())
     return await result.json()
 }
 
