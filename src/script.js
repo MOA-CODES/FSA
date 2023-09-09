@@ -1,4 +1,4 @@
-import {ClientID} from '../env.js'
+import {ClientID} from '../env.js'//hiding my app clientid from you 🫵🏾
 
 const clientId = ClientID;
 const params = new URLSearchParams(window.location.search)
@@ -21,7 +21,7 @@ async function redirectToAuthCodeFlow(clientId) {
 
     const params = new URLSearchParams();
     params.append("client_id", clientId)
-    params.append("response_Type", "code")
+    params.append("response_type", "code")
     params.append("redirect_uri", "http://localhost:5173/callback")
     params.append("scope", "user-read-private user-read-email")//list of permissions were requesting from the user
     params.append("code_challenge_method", "S256")
@@ -46,7 +46,7 @@ async function generateCodeChallenge(codeVerifier){
     const digest = await window.crypto.subtle.digest('SHA-256', data)
     return btoa(String.fromCharCode.apply(null, [...new Uint8Array(digest)]))
         .replace(/\+/g, '-')
-        .replace(/\-/g, '_')
+        .replace(/\//g, '_')
         .replace(/=+$/,'')
 }
 
@@ -80,6 +80,7 @@ async function getProfile(token) {
 
 async function populateUI(profile) { 
     document.getElementById("displayName").innerText = profile.display_name;
+
     if (profile.images[0]){
         const profileImage = new Image(200, 200)
         profileImage.src = profile.images[0].url 
@@ -90,7 +91,7 @@ async function populateUI(profile) {
     document.getElementById("email").innerText = profile.email
     document.getElementById("uri").innerText = profile.uri
     document.getElementById("uri").setAttribute("href", profile.external_urls.spotify)
-    document.getElementById("uri").innerText = profile.href
-    document.getElementById("uri").setAttribute("href", profile.href)
+    document.getElementById("url").innerText = profile.href
+    document.getElementById("url").setAttribute("href", profile.href)
 
 }
