@@ -21,7 +21,7 @@ async function redirectToAuthCodeFlow(clientId) {
     const params = new URLSearchParams();
     params.append("clientId", clientId)
     params.append("response_Type", "code")
-    params.append("redirect_uri", "http://loacalhost:3000/callback")
+    params.append("redirect_uri", "http://loacalhost:5173/callback")
     params.append("scope", "user-read-private user-read-email")//list of permissions were requesting from the user
     params.append("code_challenge_method", "S256")
     params.append("code_challenge", challenge)
@@ -56,7 +56,7 @@ async function getAccessToken(clientId, code) {
     params.append("client_id", clientId)
     params.append("grant_type", "authorization_code")
     params.append("code", code)
-    params.append("redirect_uri", "http://localhost:3000/callback")
+    params.append("redirect_uri", "http://localhost:5173/callback")
     params.append("code_verifier", verifier)
 
     const result = await fetch("https://accounts.spotify.com/api/token",{
@@ -74,13 +74,8 @@ async function getProfile(token) {
         method: "GET", headers: { Authorization: `Bearer ${token}`}
     });
 
-    const data = await result.json()
-
-    console.log(data)
-
-    return await data
-
-
+    console.log(await result.json())
+    return await result.json()
 }
 
 async function populateUI(profile) { 
