@@ -1,7 +1,8 @@
 require ('dotenv').config()
 
 const clientId = process.env.ClientID;
-const code = undefined;
+const params = new URLSearchParams(window.location.search)
+const code = params.get("code")
 
 if(!code){
     redirectToAuthCodeFlow(clientId)
@@ -12,8 +13,8 @@ if(!code){
 }
 
 async function redirectToAuthCodeFlow(clientId) { 
-    const verifier = generateCodeVerifier(128)
-    const challenge = await generateCodeChallenge(verifier)
+    const verifier = generateCodeVerifier(128)//similar to paswword stuff with simple Crypt
+    const challenge = await generateCodeChallenge(verifier)//similar to paswword stuff with simple Crypt
 
     localStorage.setItem("verifier", verifier)
 
@@ -48,12 +49,37 @@ async function generateCodeChallenge(codeVerifier){
         .replace(/=+$/,'')
 }
 
-
 async function getAccessToken(clientId, code) { 
+    const verifier = localStorage.getItem("verifier")
 
+    const params = new URLSearchParams()
+    params.append("client_id", clientId)
+    params.append("grant_type", "authorization_code")
+    params.append("code", code)
+    params.append("redirect_uri", "http://localhost:3000/callback")
+    params.append("code_verifier", verifier)
+
+    const result = await fetch("https://accounts.spotify.com/api/token",{
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: params
+    })
+
+    const { access_token } = await result.json()
+    return access_token
 }
 
 async function getProfile(token) { 
+    const result = await fetch("https://api.spotify.com/v1/me", {
+        method: "GET", headers: { Authorization: `Bearer ${token}`}
+    });
+
+    const data = await result.json()
+
+    console.log(data)
+
+    return await data
+
 
 }
 
